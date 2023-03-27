@@ -7,7 +7,7 @@ THE FILE IS BRUTLAZER
 
 
 commands to run it 
-
+Not finished yet! more updates comming soon!
 
 LINUX:
 Open a terminal or command prompt.
