@@ -10,3 +10,6 @@ commands to run it
 
 
 LINUX:
+Open a terminal or command prompt.
+Navigate to the directory where your script is located using the cd command.
+Once you are in the directory, use the command ./<BrutLazer.cpp>
