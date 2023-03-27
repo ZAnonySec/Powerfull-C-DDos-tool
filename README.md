@@ -1,2 +1,3 @@
-# Powerfull-C-DDos-tool
-# C++ TOOL
+# Powerfull C++ DDos-tool
+# C++ DDOS TOOL                                                                       zer0sec
+ 
