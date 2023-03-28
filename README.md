@@ -13,9 +13,16 @@ more updates comming soon!
 
 
 
+
+
+
 WINDOWS 
 
 g++ BrutLazer.cpp -o BrutLazer.exe
+
+
+
+
 
 
 ./BrutLazer.exe
