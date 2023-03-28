@@ -8,9 +8,6 @@
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
 using namespace std;
 
 // TCP packet structure
@@ -135,6 +132,7 @@ int main(int argc, char* argv[]) {
     // Print success message
     cout << "Sent packet with spoofed IP " << inet_ntoa(*(in_addr*)&ip_hdr.src_addr) 
          << " and source port " << ntohs(tcp_hdr.src_port) << " to " << target_ip << ":" << target_port << "\n";
+    
     
     // Cleanup
     close(sockfd);
