@@ -24,5 +24,13 @@ g++ BrutLazer.cpp -o BrutLazer.exe
 
 LINUX:
 Open a terminal or command prompt.
-Navigate to the directory where your script is located using the cd command.
-Once you are in the directory, use the command ./<BrutLazer.cpp>
+
+cd Powerfull-C-DDos-tool
+
+sudo apt-get install g++
+
+g++ BrutLazer.cpp -o BrutLazer
+
+./BrutLazer
+
+
