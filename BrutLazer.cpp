@@ -38,7 +38,7 @@ struct ipheader {
 };
 
 void usage(char* prog_name) {
-    cout << "Usage: " << prog_name << " <target IP> <target port> <nickname>\n";
+    cout << "Usage: " << prog_name << " <target IP> <target port>\n";
 }
 
 unsigned short csum(unsigned short *buf, int nwords) {
@@ -52,7 +52,7 @@ unsigned short csum(unsigned short *buf, int nwords) {
 
 int main(int argc, char* argv[]) {
     // Check for correct number of arguments
-    if (argc != 4) {
+    if (argc != 3) {
         usage(argv[0]);
         return 1;
     }
@@ -61,7 +61,6 @@ int main(int argc, char* argv[]) {
     // Parse arguments
     char* target_ip = argv[1];
     int target_port = atoi(argv[2]);
-    char* nickname = argv[3];
 
     // Create raw socket
     int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
@@ -96,46 +95,52 @@ int main(int argc, char* argv[]) {
     tcp_hdr.window_size = htons(512);
     tcp_hdr.checksum = 0;
     tcp_hdr.urg_ptr = 0;
-      // Construct packet
+    
+    // Construct packet
     char packet[65535];
     memset(packet, 0, 65535);
     memcpy(packet, &ip_hdr, sizeof(struct ipheader));
     memcpy(packet + sizeof(struct ipheader), &tcp_hdr, sizeof(struct tcpheader));
     
-    // Calculate TCP checksum
-    tcp_hdr.checksum = csum((unsigned short*)(packet + sizeof(struct ipheader)), sizeof(struct tcpheader)/2);
-    memcpy(packet + sizeof(struct ipheader), &tcp_hdr, sizeof(struct tcpheader));
-    
-    // Calculate IP checksum
-    ip_hdr.checksum = csum((unsigned short*)packet, sizeof(struct ipheader)/2);
-    memcpy(packet, &ip_hdr, sizeof(struct ipheader));
+    // Construct packet
+char packet[65535];
+memset(packet, 0, 65535);
+memcpy(packet, &ip_hdr, sizeof(struct ipheader));
+memcpy(packet + sizeof(struct ipheader), &tcp_hdr, sizeof(struct tcpheader));
 
-    // Set socket options
-    const int on = 1;
-    if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on)) < 0) {
-        perror("setsockopt() error");
-        return 1;
-    }
+// Calculate TCP checksum
+tcp_hdr.checksum = csum((unsigned short*)(packet + sizeof(struct ipheader)), sizeof(struct tcpheader)/2);
+memcpy(packet + sizeof(struct ipheader), &tcp_hdr, sizeof(struct tcpheader));
 
-    // Set destination address and port
-    struct sockaddr_in dest_addr;
-    dest_addr.sin_family = AF_INET;
-    dest_addr.sin_addr.s_addr = inet_addr(target_ip);
-    dest_addr.sin_port = htons(target_port);
-    
-    // Send packet
-    if (sendto(sockfd, packet, ip_hdr.total_len, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr)) < 0) {
-        perror("sendto() error");
-        return 1;
-    }
-    
-    // Print success message
-    cout << "Sent packet with spoofed IP " << inet_ntoa(*(in_addr*)&ip_hdr.src_addr) 
-         << " and source port " << ntohs(tcp_hdr.src_port) << " to " << target_ip << ":" << target_port << "\n";
-    
-    
-    // Cleanup
-    close(sockfd);
-    system("netsh firewall set opmode enable");
-    return 0;
+// Calculate IP checksum
+ip_hdr.checksum = csum((unsigned short*)packet, sizeof(struct ipheader)/2);
+memcpy(packet, &ip_hdr, sizeof(struct ipheader));
+
+// Set socket options
+const int on = 1;
+if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on)) < 0) {
+    perror("setsockopt() error");
+    return 1;
 }
+
+// Set destination address and port
+struct sockaddr_in dest_addr;
+dest_addr.sin_family = AF_INET;
+dest_addr.sin_addr.s_addr = inet_addr(target_ip);
+dest_addr.sin_port = htons(target_port);
+
+// Send packet
+if (sendto(sockfd, packet, ip_hdr.total_len, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr)) < 0) {
+    perror("sendto() error");
+    return 1;
+}
+
+// Print success message
+cout << "Sent packet with spoofed IP " << inet_ntoa(*(in_addr*)&ip_hdr.src_addr) 
+     << " and source port " << ntohs(tcp_hdr.src_port) << " to " << target_ip << ":" << target_port << "\n";
+
+// Cleanup
+close(sockfd);
+system("netsh firewall set opmode enable");
+return 0;
+
