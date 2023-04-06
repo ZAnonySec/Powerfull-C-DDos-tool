@@ -38,4 +38,5 @@ g++ BrutLazer.cpp -o BrutLazer
 
 ./BrutLazer
 
-
+I am not finished yet!
+If there is any bugs let me know! 
