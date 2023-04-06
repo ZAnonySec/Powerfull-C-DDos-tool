@@ -1,9 +1,9 @@
 # BRUTLAZER Powerfull C++ TCP AND SYN DOS tool also could be used as DDOS!
 # C++ DDOS TOOL                                                                     made by  zer0sec and my main accaunt anonymouse0977
  
- This is for for educational purposes only disclaimer only do not use it as fun tool u dumb a## use this for pentesting or a REVENGE JUST KIDDING!
+ This is for for educational purposes only disclaimer only do not use it as fun tool or any other dumb stuff!
  
-Its and TCP SYN flood DOS tool and it also has Spoofed ip build inside of it                                               some place on the code was created by chatgpt!
+Its and TCP SYN flood DOS tool and it also has Spoofed ip build inside of it                                           some place on the code was created by chatgpt!
 
 THE FILE IS BRUTLAZER 
 ㅤㅤㅤㅤㅤㅤㅤ
