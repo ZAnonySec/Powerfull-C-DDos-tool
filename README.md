@@ -36,7 +36,14 @@ sudo apt-get install g++
 
 g++ BrutLazer.cpp -o BrutLazer
 
-./BrutLazer
+USE SUDO!!
+
+sudo ./BrutLazer
+
+example
+
+ sudo ./BrutLazer (IP) (PORT) (Number of packets)
 
 I am not finished yet!
+More updates coming soon!
 If there is any bugs let me know! 
