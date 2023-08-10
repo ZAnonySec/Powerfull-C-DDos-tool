@@ -1,5 +1,5 @@
 # BRUTLAZER Powerfull C++ TCP AND SYN DOS tool also could be used as DDOS!
-# C++ DDOS TOOL                                                                     made by  zer0sec and my main accuount anonymouse0977
+# C++ DDOS TOOL                                                                     made by  zer0sec
  
  This is for for educational purposes only disclaimer only do not use it as fun tool or any other dumb stuff!
  
