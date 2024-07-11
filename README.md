@@ -3,7 +3,7 @@
  
  This is for for educational purposes only disclaimer only do not use it as fun tool or any other dumb stuff!
  
-Its and TCP SYN flood DOS tool and it also has Spoofed ip build inside of it                                           some place on the code was created by chatgpt!
+Its and TCP SYN flood DOS tool and it also has Spoofed ip build inside of it                                           
 
 THE FILE IS BRUTLAZER 
 ㅤㅤㅤㅤㅤㅤㅤ
